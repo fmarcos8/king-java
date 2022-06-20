@@ -2,5 +2,6 @@ package engine.utils;
 
 public enum ObjectType {
     Player,
-    Enemy
+    Enemy,
+    Damage_Player
 }

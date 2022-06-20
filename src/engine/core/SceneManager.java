@@ -11,7 +11,7 @@ import static engine.utils.Constants.Game.*;
 public class SceneManager {
     public BufferedImage[] tiles;
     private BufferedImage tilesSprite;
-    public int[][] currentSceneData;
+    public static int[][] currentSceneData;
 
     public Scene scene;
     public String sceneImageFile;
@@ -46,8 +46,9 @@ public class SceneManager {
         for (int y = 0; y < COUNT_TILES_IN_HEIGHT; y++) { //height
             for (int x = 0; x < currentSceneData[0].length; x++) { //width
                 int idx = currentSceneData[y][x];
-                g2d.drawImage(tiles[idx], TILES_SIZE * x,TILES_SIZE * y, TILES_SIZE, TILES_SIZE,null);
+                g2d.drawImage(tiles[idx], (int)(TILES_SIZE * x - Scene.CameraScene.x), (int)(TILES_SIZE * y - Scene.CameraScene.y), TILES_SIZE, TILES_SIZE,null);
             }
         }
     }
+    
 }

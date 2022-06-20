@@ -26,10 +26,10 @@ public class DebugScene extends Scene {
     public void init() {
         sceneManager = new SceneManager(Scenes.DEBUG_SCENE_PATH);
 
-        Player player = new Player(new Transform(new Vector2(GAME_WIDTH >> 1, GAME_HEIGHT >> 1), 1.0f), new Size(PlayerConstants.WIDTH,PlayerConstants.HEIGHT), sceneManager.currentSceneData);
+        Player player = new Player(new Transform(new Vector2(400, GAME_HEIGHT >> 1), 1.0f), new Size(PlayerConstants.WIDTH,PlayerConstants.HEIGHT));
         addObject(player);
 
-        Enemy pig = new Enemy(new Transform(new Vector2(GAME_WIDTH / 2 - 50, GAME_HEIGHT / 2), GAME_SCALE), new Size(34, 28), sceneManager.currentSceneData);
+        Enemy pig = new Enemy(new Transform(new Vector2(GAME_WIDTH / 2 - 50, GAME_HEIGHT / 2), GAME_SCALE), new Size(34, 28));
         addObject(pig);
     }
 

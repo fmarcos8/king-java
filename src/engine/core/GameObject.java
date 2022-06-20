@@ -3,6 +3,7 @@ package engine.core;
 import engine.utils.ObjectType;
 import engine.utils.Size;
 import engine.utils.Transform;
+import engine.utils.Vector2;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
@@ -13,20 +14,14 @@ public class GameObject {
     protected Transform transform;
     protected Size size;
     protected List<Component> components;
-    protected int[][] sceneData;
-    protected boolean up = false,
-        down = false,
-        left = false,
-        right = false,
-        moving = false,
-        attacking = false,
-        jump = false,
-        inAir = false;
+    protected Scene parentScene;
+    protected Vector2 cameraScene = Scene.CameraScene;
+    
+    public boolean activated = true;
 
-    public GameObject(Transform transform, Size size, int[][] sceneData) {
+    public GameObject(Transform transform, Size size) {
         this.transform = transform;
         this.size = size;
-        this.sceneData = sceneData;
         this.components = new ArrayList<>();
     }
 
@@ -43,6 +38,23 @@ public class GameObject {
         }
         return null;
     }
+    
+    public <T extends  Component> T getComponent(Class<T> componentClass, int index) {
+        int i = 0;
+    	for (Component component: components) {
+            if (componentClass.isAssignableFrom(component.getClass()) && i == index) {
+                try {
+                    return componentClass.cast(component);
+                } catch (ClassCastException e) {
+                    e.printStackTrace();
+                    System.exit(-1);
+                }
+
+            	i++;
+            }
+        }
+        return null;
+    }
 
     public void addComponent(Component c) {
         c.parent = this;
@@ -50,6 +62,7 @@ public class GameObject {
     }
 
     public void update() {
+    	if(activated)
         for (int i = 0; i < components.size(); i++ ) {
             Component c = components.get(i);
             c.update();
@@ -57,6 +70,7 @@ public class GameObject {
     }
 
     public void render(Graphics g) {
+    	if(activated)
         for (int i = 0; i < components.size(); i++ ) {
             Component c = components.get(i);
             c.render(g);
@@ -75,59 +89,22 @@ public class GameObject {
         return size;
     }
 
-    public boolean isUp() {
-        return up;
+    public void setScene(Scene s) {
+    	parentScene = s;
     }
 
-    public void setUp(boolean up) {
-        this.up = up;
+    public GameObject Instantiate(GameObject go) {
+    	parentScene.addObject(go);
+    	return go;
     }
-
-    public boolean isDown() {
-        return down;
+    
+    public GameObject Instantiate(GameObject go, ObjectType ot) {
+    	go.type = ot;
+    	parentScene.addObject(go);
+    	return go;
     }
-
-    public void setDown(boolean down) {
-        this.down = down;
-    }
-
-    public boolean isLeft() {
-        return left;
-    }
-
-    public void setLeft(boolean left) {
-        this.left = left;
-    }
-
-    public boolean isRight() {
-        return right;
-    }
-
-    public void setRight(boolean right) {
-        this.right = right;
-    }
-
-    public boolean isMoving() {
-        return moving;
-    }
-
-    public void setMoving(boolean moving) {
-        this.moving = moving;
-    }
-
-    public boolean isAttacking() {
-        return attacking;
-    }
-
-    public void setAttacking(boolean attacking) {
-        this.attacking = attacking;
-    }
-
-    public boolean isJump() {
-        return jump;
-    }
-
-    public void setJump(boolean jump) {
-        this.jump = jump;
+    
+    public void start() {
+    	
     }
 }

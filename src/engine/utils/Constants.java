@@ -79,11 +79,14 @@ public class Constants {
         public static final int HEIGHT = 28;
 
         public static final int ANIM_IDLE = 0;
-
+        public static final int ANIM_DAMAGE = 4;
+        
         public static int GetAnimationFrameCount(int index) {
             switch (index) {
                 case ANIM_IDLE:
                     return 11;
+                case ANIM_DAMAGE:
+                    return 2;
                 default:
                     return 0;
             }

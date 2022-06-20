@@ -1,6 +1,9 @@
 package engine.utils;
 
 import javax.imageio.ImageIO;
+
+import engine.core.Scene;
+
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -20,7 +23,7 @@ public class Functions {
             e.printStackTrace();
         } finally {
             try {
-                is.close();
+            	is.close();
             } catch (IOException e){
                 e.printStackTrace();
                 System.exit(-1);
@@ -63,6 +66,8 @@ public class Functions {
     }
 
     private static boolean IsSolid(float x, float y, int[][] sceneData) {
+    	x += Scene.CameraScene.x;
+    	y += Scene.CameraScene.y;
         int maxWidth = sceneData[0].length * TILES_SIZE;
 
         if (x < 0 || x >= maxWidth) {
@@ -81,18 +86,18 @@ public class Functions {
     }
 
     public static float GetEntityXPosNextToWall(Rectangle2D.Float hitBox, float xSpeed) {
-        int currentTile = (int)(hitBox.x / TILES_SIZE);
+        int currentTile = (int)((hitBox.x+Scene.CameraScene.x) / TILES_SIZE);
         if (xSpeed > 0) {
-            int tileXPos = currentTile * TILES_SIZE;
+            int tileXPos = (int) (currentTile * TILES_SIZE);
             int xOffset = (int)(TILES_SIZE - hitBox.width);
-            return tileXPos + xOffset - 1;
+            return tileXPos + xOffset - 1 - Scene.CameraScene.x;
         } else {
-            return currentTile * TILES_SIZE;
+            return currentTile * TILES_SIZE - Scene.CameraScene.x;
         }
     }
 
     public static float GetEntityYPosUnderRoofOrAboveFloor(Rectangle2D.Float hitBox, float airSpeed) {
-        int currentTile = (int)(hitBox.y / TILES_SIZE);
+        int currentTile = (int)((hitBox.y) / TILES_SIZE);
         if (airSpeed > 0) {
             int tileYPos = currentTile * TILES_SIZE;
             int yOffset = (int)(TILES_SIZE - hitBox.height);

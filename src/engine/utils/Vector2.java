@@ -12,4 +12,14 @@ public class Vector2 {
         this.x = x;
         this.y = y;
     }
+    
+    public void sum(Vector2 that) {
+    	this.x += that.x;
+    	this.y += that.y;
+    }
+    
+    public void sub(Vector2 that) {
+    	this.x -= that.x;
+    	this.y -= that.y;
+    }
 }

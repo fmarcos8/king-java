@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<controller>
+	<player index="0">
+		<keys>
+			<left>37</left>
+			<right>39</right>
+			<up>38</up>
+			<down>40</down>
+			<jump>88</jump>
+			<attack>67</attack>
+		</keys>
+	</player>
+	<player index="1">
+		<keys>
+			<left>65</left>
+			<right>68</right>
+			<up>2</up>
+			<down>0</down>
+			<jump>0</jump>
+			<attack>0</attack>
+		</keys>
+	</player>
+</controller>
