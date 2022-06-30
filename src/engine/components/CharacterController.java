@@ -43,8 +43,11 @@ public class CharacterController extends Component {
     	Left, Right
     };
     public LookSide lookSide = LookSide.Right;
+    public int attack_delay;
+    public boolean permission_attack = true;
 	
 	public CharacterController(GameObject go) {
+		attack_delay = 25;
 		gameObject = go;
 		index = count++;
 
@@ -56,6 +59,8 @@ public class CharacterController extends Component {
     	keys[3] = Integer.parseInt(cm.getValue("player(index:"+index+").keys.down"));
     	keys[4] = Integer.parseInt(cm.getValue("player(index:"+index+").keys.jump"));
     	keys[5] = Integer.parseInt(cm.getValue("player(index:"+index+").keys.attack"));
+    	
+    	Scene.setInfo("attack_delay", attack_delay);
 	}
 	
 	public static void add(Integer i) {
@@ -85,8 +90,9 @@ public class CharacterController extends Component {
 		} else if(i == 4) {
 			jump = true;
 //			gameObject.getTransform().position.x += 3.0f;
-		} else if(i == 5) {
+		} else if(i == 5 && permission_attack && !attacking) {
 			attacking = true;
+			permission_attack = false;
 //			gameObject.getTransform().position.x += 3.0f;
 		} 
 	}
@@ -102,7 +108,7 @@ public class CharacterController extends Component {
 			jump = false;
 //			gameObject.getTransform().position.x += 3.0f;
 		} else if(i == 5) {
-			attacking = false;
+			permission_attack = true;
 //			gameObject.getTransform().position.x += 3.0f;
 		}
 	}
@@ -120,6 +126,10 @@ public class CharacterController extends Component {
 	
 	@Override
     public void update() {
+		if(attacking) {
+			attack_delay--;
+			Scene.setInfo("attack_delay", attack_delay);
+		}
 		for(int i = 0; i < keys.length; i++) {
 			if(keyPool.getOrDefault(keys[i], false)) {
 				move(i);
@@ -128,6 +138,13 @@ public class CharacterController extends Component {
 			}
 		}
 		if(!left && !right) moving = false;
+
+		if(attack_delay == 0) {
+			attacking = false;
+			attack_delay = 25;	
+			Scene.setInfo("attack_delay", attack_delay);
+		}
+		
 		
 		RigidBody rb = gameObject.getComponent(RigidBody.class);
 		
@@ -171,6 +188,7 @@ public class CharacterController extends Component {
 		} else {
 			gameObject.getTransform().position.sum(dir);
 		}
+		
 //		gameObject.getTransform().position
 	}
 	

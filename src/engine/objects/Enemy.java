@@ -4,6 +4,7 @@ import engine.components.BoxCollider2D;
 import engine.components.CharacterController;
 import engine.components.RigidBody;
 import engine.components.Sprite;
+import engine.components.CharacterController.LookSide;
 import engine.core.GameObject;
 import engine.core.Scene;
 import engine.core.SceneManager;
@@ -34,7 +35,10 @@ public class Enemy extends GameObject {
     private float airSpeed = 0.0f;
     private int atacatedAnimationCount = 0;
     private Vector2 lastModCam = new Vector2(0,0);
+    private LookSide lookSide = LookSide.Left;
 
+    private  boolean isMove = true;
+    
     public Enemy(Transform transform, Size size) {
         super(transform, size);
         transform.position.sub(cameraScene);
@@ -43,7 +47,6 @@ public class Enemy extends GameObject {
         this.addComponent(new Sprite(PIG_SPRITE_PATH, WIDTH, HEIGHT));
         this.addComponent(new BoxCollider2D((int)(18 * GAME_SCALE), (int)(17 * GAME_SCALE), SHOW_COLLIDER_TRUE));
         this.addComponent(new RigidBody(this));
-        this.addComponent(new CharacterController(this));
     }
 
     @Override
@@ -51,7 +54,11 @@ public class Enemy extends GameObject {
         updateAnimation();
         setAnimation();
         updatePosition();
-        List<GameObject> aux = parentScene.getObjects(ObjectType.Damage_Player);
+        List<GameObject> aux = parentScene.getObjects(
+        new ObjectType[]{
+        	ObjectType.Damage_Player_Left, 
+        	ObjectType.Damage_Player_Right	
+        });
         for(int i = 0; i < aux.size(); i++) {
         	GameObject go = aux.get(i);
         	BoxCollider2D bce = getComponent(BoxCollider2D.class);
@@ -61,6 +68,15 @@ public class Enemy extends GameObject {
         			if(BoxCollider2D.intersection(bcd, bce)) {
         				bce.intersected = true;
         				atacatedAnimationCount = 3;
+        				RigidBody rb = getComponent(RigidBody.class);
+        				if(go.getType() == ObjectType.Damage_Player_Right) {
+        					rb.addForce(new Vector2(1,.7f));
+        					lookSide = lookSide.Right;
+        				}
+        				if(go.getType() == ObjectType.Damage_Player_Left) {
+        					rb.addForce(new Vector2(-1,.7f));
+        					lookSide = lookSide.Left;
+        				}
         			} else {
         				bce.intersected = false;
         			}
@@ -70,6 +86,12 @@ public class Enemy extends GameObject {
         	}
         }
         super.update();
+        
+        if(isMove) {
+        	currentAnimation = ANIM_MOVE;
+        } else {
+        	currentAnimation = ANIM_IDLE;
+        }
     }
 
     private void updatePosition() {
@@ -77,6 +99,15 @@ public class Enemy extends GameObject {
     		transform.position.x +=  lastModCam.x - Scene.CameraScene.x;
     		lastModCam.x = Scene.CameraScene.x;    		
     	}
+//    	if(dirAttackDamageRight && dirAttackDamage.x >= 0) {
+//    		transform.position.sum(dirAttackDamage);
+//    		dirAttackDamage.x -= 0.1;
+//    	}
+//    	if(dirAttackDamageLeft && dirAttackDamage.x <= 0) {
+//    		transform.position.sum(dirAttackDamage);
+//    		dirAttackDamage.x += 0.1;
+//    		rb.addForce(dirAttackDamage);
+//    	}
 //        if (getComponent(RigidBody.class).inAir) {
 //            if (CanMoveHere(transform.position.x, transform.position.y + airSpeed, getComponent(BoxCollider2D.class).getHitBox().width, getComponent(BoxCollider2D.class).getHitBox().height, SceneManager.currentSceneData)) {
 //                transform.position.y += airSpeed;
@@ -91,6 +122,8 @@ public class Enemy extends GameObject {
 
         if (atacatedAnimationCount>0) {
             currentAnimation = ANIM_DAMAGE;
+        } else if(isMove) {
+        	currentAnimation = ANIM_MOVE;
         } else {
         	currentAnimation = ANIM_IDLE;
         }
@@ -123,13 +156,31 @@ public class Enemy extends GameObject {
         int currentFrame = getComponent(Sprite.class).animIndex;
         
         try {
-        	g.drawImage(getComponent(Sprite.class).getAnimations()[this.currentAnimation][currentFrame],
-        			(int)(transform.position.x - xDrawOffset),
-        			(int)(transform.position.y - yDrawOffset),
-        			(int)(size.width * GAME_SCALE),
-        			(int)(size.height * GAME_SCALE),
-        			null
-        			);			
+        	if(lookSide == LookSide.Right) {
+        		g.drawImage(getComponent(Sprite.class).getAnimations()[this.currentAnimation][currentFrame],
+        				(int)(transform.position.x - xDrawOffset),
+        				(int)(transform.position.y - yDrawOffset),
+        				(int)(size.width * GAME_SCALE),
+        				(int)(size.height * GAME_SCALE),
+        				null
+        				);	        		
+        	} else {
+        		g.drawImage(getComponent(Sprite.class).getAnimations()[this.currentAnimation][currentFrame],
+        				(int)(transform.position.x - xDrawOffset)+(int)(size.width * GAME_SCALE)+10,
+        				(int)(transform.position.y - yDrawOffset),
+        				(int)(size.width * GAME_SCALE)*-1,
+        				(int)(size.height * GAME_SCALE),
+        				null
+        				);	
+        	}
+        	if(Scene.ShowDebug) {
+        		g.drawRect(
+        				(int)(transform.position.x - xDrawOffset),
+        				(int)(transform.position.y - yDrawOffset),
+        				(int)(size.width * GAME_SCALE),
+        				(int)(size.height * GAME_SCALE)
+        				);        		
+        	}
 		} catch (Exception e) {
 			System.out.println(this.currentAnimation);
 			System.out.println(currentFrame);

@@ -29,7 +29,7 @@ public class DebugScene extends Scene {
         Player player = new Player(new Transform(new Vector2(400, GAME_HEIGHT >> 1), 1.0f), new Size(PlayerConstants.WIDTH,PlayerConstants.HEIGHT));
         addObject(player);
 
-        Enemy pig = new Enemy(new Transform(new Vector2(GAME_WIDTH / 2 - 50, GAME_HEIGHT / 2), GAME_SCALE), new Size(34, 28));
+        Enemy pig = new Enemy(new Transform(new Vector2(1000, GAME_HEIGHT / 2), GAME_SCALE), new Size(34, 28));
         addObject(pig);
     }
 
@@ -46,5 +46,7 @@ public class DebugScene extends Scene {
         for (int i = 0; i < objects.size(); i++) {
             objects.get(i).render(g);
         }
+        
+        super.render(g);
     }
 }

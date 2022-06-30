@@ -1,6 +1,7 @@
 package engine.components;
 
 import engine.core.Component;
+import engine.core.Scene;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -39,7 +40,7 @@ public class BoxCollider2D extends Component {
     }
     
     public void render(Graphics g) {
-    	if (show) {
+    	if (Scene.ShowDebug) {
             Graphics2D g2d = (Graphics2D) g;
             if(intersected) {
             	g2d.setColor(Color.GREEN);            	

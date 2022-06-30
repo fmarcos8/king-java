@@ -9,6 +9,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static engine.utils.Constants.Component.SHOW_COLLIDER_TRUE;
 import static engine.utils.Constants.Game.*;
@@ -16,6 +17,7 @@ import static engine.utils.Constants.Game.GAME_SCALE;
 
 public class KeyInputListener extends KeyAdapter implements KeyListener {
     private Scene currentScene;
+    private HashMap<Integer, Boolean> keyPool = new HashMap<Integer, Boolean>();
     
     public KeyInputListener(Scene currentScene) {
         this.currentScene = currentScene;
@@ -24,6 +26,10 @@ public class KeyInputListener extends KeyAdapter implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
     	CharacterController.add(e.getKeyCode());
+    	if(e.getKeyCode() == KeyEvent.VK_F3 && !keyPool.containsKey(e.getKeyCode())) {
+    		keyPool.put(e.getKeyCode(), true);
+    		Scene.ShowDebug = !Scene.ShowDebug;
+    	}
 //    	poolKeys.add(e.getKeyCode());
 //        for (int i = 0; i < currentScene.objects.size(); i++) {
 //            GameObject object = currentScene.objects.get(i);
@@ -57,6 +63,7 @@ public class KeyInputListener extends KeyAdapter implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
     	CharacterController.remove(e.getKeyCode());
+    	keyPool.remove(e.getKeyCode());
 //    	poolKeys.remove(e.getKeyCode());
 //        for (int i = 0; i < currentScene.objects.size(); i++) {
 //            GameObject object = currentScene.objects.get(i);

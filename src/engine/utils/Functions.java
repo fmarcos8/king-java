@@ -69,11 +69,12 @@ public class Functions {
     	x += Scene.CameraScene.x;
     	y += Scene.CameraScene.y;
         int maxWidth = sceneData[0].length * TILES_SIZE;
-
+        int maxHeight = sceneData.length * TILES_SIZE;
+        
         if (x < 0 || x >= maxWidth) {
             return true;
         }
-        if (y < 0 || y >= GAME_HEIGHT) {
+        if (y < 0 || y >= maxHeight) {
             return true;
         }
 
@@ -86,7 +87,7 @@ public class Functions {
     }
 
     public static float GetEntityXPosNextToWall(Rectangle2D.Float hitBox, float xSpeed) {
-        int currentTile = (int)((hitBox.x+Scene.CameraScene.x) / TILES_SIZE);
+        int currentTile = (int)((hitBox.x + Scene.CameraScene.x) / TILES_SIZE);
         if (xSpeed > 0) {
             int tileXPos = (int) (currentTile * TILES_SIZE);
             int xOffset = (int)(TILES_SIZE - hitBox.width);
@@ -97,13 +98,13 @@ public class Functions {
     }
 
     public static float GetEntityYPosUnderRoofOrAboveFloor(Rectangle2D.Float hitBox, float airSpeed) {
-        int currentTile = (int)((hitBox.y) / TILES_SIZE);
+        int currentTile = (int)((hitBox.y + Scene.CameraScene.y) / TILES_SIZE);
         if (airSpeed > 0) {
             int tileYPos = currentTile * TILES_SIZE;
             int yOffset = (int)(TILES_SIZE - hitBox.height);
-            return tileYPos + yOffset - 1;
+            return tileYPos + yOffset - 1 - Scene.CameraScene.y;
         } else {
-            return currentTile * TILES_SIZE;
+            return currentTile * TILES_SIZE - Scene.CameraScene.y;
         }
     }
 

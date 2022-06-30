@@ -29,7 +29,7 @@ public class Player extends GameObject {
     private float airSpeed = 0.0f;
     private float fallSpeedAfterCollision = 0.5f * GAME_SCALE;
     
-    public GameObject AreaDamage;
+    public GameObject[] AreaDamage = new GameObject[2];
 
     public Player(Transform transform, Size size) {
         super(transform, size);
@@ -43,10 +43,15 @@ public class Player extends GameObject {
     }
     
     public void start() {
-        AreaDamage = new GameObject(new Transform(new Vector2(transform.position.x + 45, transform.position.y-20), 1.0f), size);
-        AreaDamage.addComponent(new BoxCollider2D((int)(21 * GAME_SCALE)+25, (int)(27 * GAME_SCALE)+40, SHOW_COLLIDER_TRUE));
-        AreaDamage.activated = false;
-        Instantiate(AreaDamage, ObjectType.Damage_Player);
+        AreaDamage[0] = new GameObject(new Transform(new Vector2(transform.position.x - 70, transform.position.y-20), 1.0f), size);
+        AreaDamage[0].addComponent(new BoxCollider2D((int)(21 * GAME_SCALE)+25, (int)(27 * GAME_SCALE)+40, SHOW_COLLIDER_TRUE));
+        AreaDamage[0].activated = false;
+        Instantiate(AreaDamage[0], ObjectType.Damage_Player_Left);
+        
+        AreaDamage[1] = new GameObject(new Transform(new Vector2(transform.position.x + 45, transform.position.y-20), 1.0f), size);
+        AreaDamage[1].addComponent(new BoxCollider2D((int)(21 * GAME_SCALE)+25, (int)(27 * GAME_SCALE)+40, SHOW_COLLIDER_TRUE));
+        AreaDamage[1].activated = false;
+        Instantiate(AreaDamage[1], ObjectType.Damage_Player_Right);
     }
     
     private void setAnimation() {
@@ -97,15 +102,17 @@ public class Player extends GameObject {
         updateAnimation();
         setAnimation();
         CharacterController cc = getComponent(CharacterController.class);
-        if(cc.lookSide == CharacterController.LookSide.Right) {
-        	AreaDamage.getTransform().position = new Vector2(transform.position.x + 45, transform.position.y-20);        	
-        } else {
-        	AreaDamage.getTransform().position = new Vector2(transform.position.x - 70, transform.position.y-20); 
-        }
+        AreaDamage[1].getTransform().position = new Vector2(transform.position.x + 45, transform.position.y-20);        	
+        AreaDamage[0].getTransform().position = new Vector2(transform.position.x - 70, transform.position.y-20); 
         if(cc.isAttacking()) {
-        	AreaDamage.activated = true;
+        	if(cc.lookSide == CharacterController.LookSide.Right) {
+        		AreaDamage[1].activated = true;
+        	} else {
+        		AreaDamage[0].activated = true;
+        	}
         } else {
-        	AreaDamage.activated = false;
+        	AreaDamage[0].activated = false;
+        	AreaDamage[1].activated = false;
         }
         
         if(transform.position.x > GAME_WIDTH/2) {
@@ -118,6 +125,18 @@ public class Player extends GameObject {
 			Scene.CameraScene.x = transform.position.x+Scene.CameraScene.x - GAME_WIDTH/2;
 			transform.position.x = GAME_WIDTH/2;
 		}
+        
+        if(transform.position.y > GAME_HEIGHT/2) {
+			int MAX = SceneManager.currentSceneData.length * TILES_SIZE;
+			if(Scene.CameraScene.y < MAX - GAME_HEIGHT) {
+				Scene.CameraScene.y = transform.position.y+Scene.CameraScene.y - GAME_HEIGHT/2;				
+				transform.position.y = GAME_HEIGHT/2;
+			}
+		} else if(Scene.CameraScene.y > 0){
+			Scene.CameraScene.y = transform.position.y+Scene.CameraScene.y - GAME_HEIGHT/2;
+			transform.position.y = GAME_HEIGHT/2;
+		}
+        Scene.setInfo("Camera Position",Scene.CameraScene.toString());
     }
 
     @Override

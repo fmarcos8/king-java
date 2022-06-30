@@ -19,7 +19,7 @@ public class RigidBody extends Component{
 	public float airSpeed = 0.0f;
 	private float fallSpeedAfterCollision = 0.5f * GAME_SCALE;
 	public boolean inAir;
-
+	private Vector2 force = new Vector2(0,0);
 	
 	public RigidBody(GameObject go) {
 		gameObject = go;
@@ -31,10 +31,13 @@ public class RigidBody extends Component{
 		inAir = ia;
 	}
 	
+	
 	@Override
     public void update() {
 		BoxCollider2D boxCollider = gameObject.getComponent(BoxCollider2D.class);
 		Vector2 dir = new Vector2(0,0);
+		dir.sum(force);
+		force.y = 0f;
 		if (inAir) {
             if (boxCollider == null || CanMoveHere(gameObject.getTransform().position.x, gameObject.getTransform().position.y + airSpeed, boxCollider.getHitBox().width, boxCollider.getHitBox().height, SceneManager.currentSceneData)) {
             	dir.y += airSpeed;
@@ -53,7 +56,21 @@ public class RigidBody extends Component{
         } else {
         	airSpeed = 0;
         }
+		updateForce();
     }
+	
+	private void updateForce() {
+		if(this.force.x > 0f) {
+			this.force.x -= 0.1f;
+		} else if(this.force.x < 0f){
+			this.force.x += 0.1f;
+		}
+	}
+	
+	public void addForce(Vector2 force) {
+		this.force = force;
+		inAir = true;
+	}
 	
 	private void updatePos(Vector2 dir) {
 		BoxCollider2D boxCollider = gameObject.getComponent(BoxCollider2D.class);

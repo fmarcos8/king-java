@@ -22,4 +22,8 @@ public class Vector2 {
     	this.x -= that.x;
     	this.y -= that.y;
     }
+    
+    public String toString() {
+    	return "X:"+x+",Y:"+y;
+    }
 }

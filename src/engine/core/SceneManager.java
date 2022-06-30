@@ -43,7 +43,7 @@ public class SceneManager {
 
     public void render(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        for (int y = 0; y < COUNT_TILES_IN_HEIGHT; y++) { //height
+        for (int y = 0; y < currentSceneData.length; y++) { //height
             for (int x = 0; x < currentSceneData[0].length; x++) { //width
                 int idx = currentSceneData[y][x];
                 g2d.drawImage(tiles[idx], (int)(TILES_SIZE * x - Scene.CameraScene.x), (int)(TILES_SIZE * y - Scene.CameraScene.y), TILES_SIZE, TILES_SIZE,null);
