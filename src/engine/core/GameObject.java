@@ -63,18 +63,20 @@ public class GameObject {
 
     public void update() {
     	if(activated)
-        for (int i = 0; i < components.size(); i++ ) {
-            Component c = components.get(i);
-            c.update();
-        }
+	        for (int i = 0; i < components.size(); i++ ) {
+	            Component c = components.get(i);
+	            if(c.activate)
+	            	c.update();
+	        }
     }
 
     public void render(Graphics g) {
     	if(activated)
-        for (int i = 0; i < components.size(); i++ ) {
-            Component c = components.get(i);
-            c.render(g);
-        }
+	        for (int i = 0; i < components.size(); i++ ) {
+	            Component c = components.get(i);
+	            if(c.activate)
+	            	c.render(g);
+	        }
     }
 
     public ObjectType getType() {
@@ -87,6 +89,10 @@ public class GameObject {
 
     public Size getSize() {
         return size;
+    }
+    
+    public void setSize(Size size) {
+    	this.size = size;
     }
 
     public void setScene(Scene s) {

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import engine.utils.Constants.Game;
+import engine.utils.Cheats;
 import engine.utils.ObjectType;
 import engine.utils.Vector2;
 
@@ -26,6 +27,7 @@ public abstract class Scene {
         //this.fileImageScenePath = fileImageScenePath;
         this.objects = new ArrayList<>();
         setInfo("Camera Position",CameraScene.toString());
+        Cheats.InitCheats();
         //this.sceneData = LoadSave.GetLevelData(sceneImagePath);
     }
 
@@ -37,6 +39,18 @@ public abstract class Scene {
         object.start();
     }
 
+    public GameObject getObject(ObjectType ot) {
+    	GameObject r = null;
+    	for(int i = 0; i < objects.size(); i++) {
+    		GameObject go = objects.get(i);
+    		if(ot == go.type) {
+    			r = go;
+    			break;
+    		}
+    	}
+        return r;
+    }
+    
     public List<GameObject> getObjects() {
         return objects;
     }
@@ -61,9 +75,19 @@ public abstract class Scene {
         return aux;
     }
 
-    public abstract void update();
+    public void update() {
+    	setInfo("Cheat test",Cheats.GetTryCheat());
+    	setInfo("flymode", Cheats.CheatActivated("flymode"));
+        for (int i = 0; i < objects.size(); i++) {
+            objects.get(i).update();
+        }
+    }
     
     public void render(Graphics g) {
+    	if(sceneManager != null)sceneManager.render(g);
+        for (int i = 0; i < objects.size(); i++) {
+            objects.get(i).render(g);
+        }
     	if(ShowDebug) {
     		int top = 15;
     		g.setColor(new Color(0, 0, 0, 50));
@@ -77,7 +101,7 @@ public abstract class Scene {
     			g.drawString(t+" : "+v, 2,top);
     			
     			top+=20;
-    		}    		
+    		}
     	}
     }
     
@@ -86,6 +110,10 @@ public abstract class Scene {
     }
     
     public static void setInfo(String key, int value) {
+    	info.put(key, String.valueOf(value));
+    }
+    
+    public static void setInfo(String key, float value) {
     	info.put(key, String.valueOf(value));
     }
     

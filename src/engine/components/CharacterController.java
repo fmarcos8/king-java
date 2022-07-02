@@ -17,6 +17,8 @@ import engine.core.ConfigManager;
 import engine.core.GameObject;
 import engine.core.Scene;
 import engine.core.SceneManager;
+import engine.utils.Cheats;
+import engine.utils.Transform;
 import engine.utils.Vector2;
 
 import static engine.utils.Constants.Game.*;
@@ -84,9 +86,6 @@ public class CharacterController extends Component {
 		} else if(i == 1) {
 			right = true;
 //			gameObject.getTransform().position.x += 3.0f;
-		} else if(i == 1) {
-			right = true;
-//			gameObject.getTransform().position.x += 3.0f;
 		} else if(i == 4) {
 			jump = true;
 //			gameObject.getTransform().position.x += 3.0f;
@@ -94,7 +93,14 @@ public class CharacterController extends Component {
 			attacking = true;
 			permission_attack = false;
 //			gameObject.getTransform().position.x += 3.0f;
-		} 
+		}
+		if(Cheats.CheatActivated("flymode")) {
+			if(i == 2) {
+				up = true;
+			} else if(i == 3) {
+				down = true;
+			}			
+		}
 	}
 	
 	private void stop(int i) {
@@ -111,6 +117,13 @@ public class CharacterController extends Component {
 			permission_attack = true;
 //			gameObject.getTransform().position.x += 3.0f;
 		}
+		if(Cheats.CheatActivated("flymode")) {
+			if(i == 2) {
+				up = false;
+			} else if(i == 3) {
+				down = false;
+			}			
+		}
 	}
 	
 	private void jump() {
@@ -126,6 +139,11 @@ public class CharacterController extends Component {
 	
 	@Override
     public void update() {
+//		BoxCollider2D bc = gameObject.getComponent(BoxCollider2D.class);
+//		bc.up = false;
+//		bc.left = false;
+//		bc.down = false;
+//		bc.right = false;
 		if(attacking) {
 			attack_delay--;
 			Scene.setInfo("attack_delay", attack_delay);
@@ -165,29 +183,43 @@ public class CharacterController extends Component {
         	dir.x += speed;        
         	lookSide = LookSide.Right;
         }
-
-        if (rb != null && !rb.inAir) {
-        	BoxCollider2D bc = gameObject.getComponent(BoxCollider2D.class);
-            if (bc != null && !IsEntityOnFloor(bc.getHitBox(), SceneManager.currentSceneData)) {
-            	rb.inAir = true;
-            }
+        
+        if(up) {
+        	dir.y -= speed;     
         }
+        if(down) {
+        	dir.y += speed;     
+        }
+
+//        if (rb != null && !rb.inAir) {
+//        	BoxCollider2D bc = gameObject.getComponent(BoxCollider2D.class);
+//            if (bc != null && !IsEntityOnFloor(bc.getHitBox(), SceneManager.currentSceneData)) {
+//            	rb.inAir = true;
+//            }
+//        }
 
         updatePos(dir);
     }
 	
 	private void updatePos(Vector2 dir) {
-		BoxCollider2D bc = gameObject.getComponent(BoxCollider2D.class);
-		
-		if(bc != null) {
-			if (CanMoveHere(gameObject.getTransform().position.x + dir.x, gameObject.getTransform().position.y, bc.getHitBox().width, bc.getHitBox().height, SceneManager.currentSceneData)) {
-				gameObject.getTransform().position.sum(dir);
-			} else {
-				gameObject.getTransform().position.x = GetEntityXPosNextToWall(bc.getHitBox(), dir.x);
-			}			
-		} else {
-			gameObject.getTransform().position.sum(dir);
-		}
+		RigidBody rb = gameObject.getComponent(RigidBody.class);
+		rb.addMoviment(dir);
+//		BoxCollider2D bc = gameObject.getComponent(BoxCollider2D.class);
+//		
+//		if(bc != null) {
+//			if (CanMoveHere(gameObject.getTransform().position.x + dir.x, gameObject.getTransform().position.y, bc.getHitBox().width, bc.getHitBox().height, SceneManager.currentSceneData)) {
+//				gameObject.getTransform().position.x += dir.x;
+//			} else {
+//				gameObject.getTransform().position.x = GetEntityXPosNextToWall(bc.getHitBox(), dir.x);
+//			}
+//			if (CanMoveHere(gameObject.getTransform().position.x, gameObject.getTransform().position.y + dir.y, bc.getHitBox().width, bc.getHitBox().height, SceneManager.currentSceneData)) {
+//				gameObject.getTransform().position.y += dir.y;
+//			} else {
+//				gameObject.getTransform().position.y = GetEntityYPosUnderRoofOrAboveFloor(bc.getHitBox(), dir.y);
+//			}
+//		} else {
+//			gameObject.getTransform().position.sum(dir);
+//		}
 		
 //		gameObject.getTransform().position
 	}

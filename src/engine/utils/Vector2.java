@@ -1,6 +1,9 @@
 package engine.utils;
 
+import java.awt.Point;
+
 public class Vector2 {
+	Point p;
     public float x, y;
 
     public Vector2() {

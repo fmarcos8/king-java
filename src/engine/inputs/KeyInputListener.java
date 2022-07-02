@@ -19,12 +19,14 @@ public class KeyInputListener extends KeyAdapter implements KeyListener {
     private Scene currentScene;
     private HashMap<Integer, Boolean> keyPool = new HashMap<Integer, Boolean>();
     
+    
     public KeyInputListener(Scene currentScene) {
         this.currentScene = currentScene;
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
+    	Cheats.TestCheat(e.getKeyChar());
     	CharacterController.add(e.getKeyCode());
     	if(e.getKeyCode() == KeyEvent.VK_F3 && !keyPool.containsKey(e.getKeyCode())) {
     		keyPool.put(e.getKeyCode(), true);
@@ -90,4 +92,5 @@ public class KeyInputListener extends KeyAdapter implements KeyListener {
 //            }
 //        }
     }
+
 }

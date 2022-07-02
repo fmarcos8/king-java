@@ -32,6 +32,7 @@ public class Constants {
 
         //LEVELS
         public static final String DEBUG_SCENE_PATH = "assets/scenes/debug.png";
+        public static final String DEBUG_SCENE_PATH_NEW = "assets/scenes/debug-new.png";
         //public static final String DEBUG_SCENE_EX_IMAGE = "assets/scenes/scene_one_ex_data.png";
     }
 
@@ -50,6 +51,7 @@ public class Constants {
         public static final int ANIM_JUMP = 2;//new Animation(2, 11);
         public static final int ANIM_FALL = 3;//new Animation(3, 11);
         public static final int ANIM_ATTACK = 4;//new Animation(4, 3);
+        public static final int ANIM_DAMAGE = 8;//new Animation(4, 3);
         /*public static Animation ANIM_IDLE = new Animation(5, 11);
         public static Animation ANIM_IDLE = new Animation(6, 11);
         public static Animation ANIM_IDLE = new Animation(7, 11);
@@ -66,6 +68,8 @@ public class Constants {
                 case ANIM_JUMP:
                 case ANIM_FALL:
                     return  1;
+                case ANIM_DAMAGE:
+                    return  2;
                 default:
                     return 0;
             }
@@ -81,6 +85,7 @@ public class Constants {
         public static final int ANIM_IDLE = 0;
         public static final int ANIM_MOVE = 1;
         public static final int ANIM_DAMAGE = 4;
+        public static final int ANIM_ATTACK = 2;
         
         public static int GetAnimationFrameCount(int index) {
             switch (index) {
@@ -90,6 +95,8 @@ public class Constants {
                     return 6;
                 case ANIM_DAMAGE:
                     return 2;
+                case ANIM_ATTACK:
+                    return 5;
                 default:
                     return 0;
             }

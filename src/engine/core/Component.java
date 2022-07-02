@@ -4,6 +4,7 @@ import java.awt.*;
 
 public class Component {
     public GameObject parent;
+    public boolean activate = true;
 
     public void update() {
 

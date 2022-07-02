@@ -9,6 +9,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 
 import static engine.utils.Constants.Game.GAME_HEIGHT;
 import static engine.utils.Constants.Game.TILES_SIZE;
@@ -32,19 +33,113 @@ public class Functions {
 
         return img;
     }
+    
+    static int getMapTiles(String s){
+    	String[] map = new String[] {
+    		"ururbbubg",
+    		"urubbbugu",
+    		"urubbrgbu",
+    		"ururbrubu",
+    		"ugugbbubr",
+    		"ugubbgrbu",
+    		"rbubbgrbu",
+    		"rbrbbbugu",
+    		"gbrbbbrbr",
+    		"rbgbbbrbr",
+    		"rbrbbbrbr",
+    		"ububbbubu",
+    		"uburbgubu",
+    		"ggggggggg",
+    		"ubugbrubu",
+    		"uburbrubu",
+    		"ubrgbbugu",
+    		"rbubbgugu",
+    		"ugubbbrbr",
+    		"ubrgbbupr",
+    		"rbrbbbgbr",
+    		"rbrbbbrbg",
+    		"gbrbbbrbg",
+    		"rbgbbbgbr",
+    		"ubgrbburu",
+    		"ugubbburu",
+    		"gbubbruru",
+    		"uburbruru",
+    		"urubbbgbr",
+    		"urubbbrbg",
+    		"ubgrbbubr",
+    		"gbubbrrbu",
+    		"urubbbrbr",
+    		"rbubbrrbu",
+    		"ururbbubr",
+    		"urubbrrbu",
+    		"ururbburu",
+    		"urubbburu",
+    		"urubbruru",
+    		"ururbruru",
+    		"ubrbbburu",
+    		"rbubbburu",
+    		"ubrrbbubg",
+    		"rbubbrgbu",
+    		"ubrrbbubr",
+    		"rbrbbburu",
+    		"ubrrbburu",
+    		"rbubbruru"
+    		
+    	};
+    	
+    	for(int i = 0; i < map.length; i++) {
+    		String sAux = map[i];
+    		boolean itIs = true;
+    		for(int j = 0; j < s.length(); j++) {
+    			char c1 = sAux.charAt(j), c2 = s.charAt(j);
+    			if(c1 != 'u') {
+    				if(c1 != c2) {
+    					itIs = false;
+    					break;
+    				}
+    			}
+    		}
+    		if(itIs) return i;
+    	}
+    	
+    	return 13;
+    }
 
     public static int[][] GetSceneData(String sceneImageFile) {
         BufferedImage levelImage = LoadImage(sceneImageFile);
         int[][] currentSceneData = new int[levelImage.getHeight()][levelImage.getWidth()];
+        
 
 
         for (int y = 0; y < levelImage.getHeight(); y++) { //height
             for (int x = 0; x < levelImage.getWidth(); x++) { //width
-                Color color = new Color(levelImage.getRGB(x, y));
-                int value = color.getRed();
-                if (value > 96) {
-                    value = 0;
+
+//            	Color color = new Color(levelImage.getRGB(x, y));
+            	
+                String s = "";
+                for(int i=-1;i<=1;i++) {
+                	for(int j=-1;j<=1;j++) {
+                		if(x+j < 0 || x+j >= levelImage.getWidth() || y+i < 0 || y+i >= levelImage.getHeight()) s += "g";
+                		else {
+                			Color color = new Color(levelImage.getRGB(x+j, y+i));
+                            int r = color.getRed(), g = color.getGreen(), b = color.getBlue();
+                            if(r == 255) s += "r";
+                            else if(g == 255) s += "g";
+                            else if(b == 255) s += "b";
+                		}
+                	}
                 }
+                int value = getMapTiles(s);
+                if(value != 13) {
+
+                	System.out.println(s);
+                }
+//            	int value = color.getRed();
+//                if (value > 96) {
+//                    value = 0;
+//                }
+                
+                
                 currentSceneData[y][x] = value;
             }
         }
@@ -83,7 +178,7 @@ public class Functions {
 
         int value = sceneData[(int)yIndex][(int)xIndex];
 
-        return value != 13 && value != 11 && value != 48 && value != 49 && value != 50 && value != 52 && value != 60 && value != 61 && value != 62 && value != 53 && value != 72 && value != 73 && value != 74;
+        return value < 47 && value != 13 ;
     }
 
     public static float GetEntityXPosNextToWall(Rectangle2D.Float hitBox, float xSpeed) {

@@ -5,6 +5,7 @@ import engine.components.Sprite;
 import engine.core.GameObject;
 import engine.core.Scene;
 import engine.core.SceneManager;
+import engine.inputs.MouseInfoListener;
 import engine.objects.Enemy;
 import engine.objects.Player;
 import engine.utils.*;
@@ -24,29 +25,22 @@ public class DebugScene extends Scene {
 
     @Override
     public void init() {
-        sceneManager = new SceneManager(Scenes.DEBUG_SCENE_PATH);
+        sceneManager = new SceneManager(Scenes.DEBUG_SCENE_PATH_NEW);
 
         Player player = new Player(new Transform(new Vector2(400, GAME_HEIGHT >> 1), 1.0f), new Size(PlayerConstants.WIDTH,PlayerConstants.HEIGHT));
         addObject(player);
 
-        Enemy pig = new Enemy(new Transform(new Vector2(1000, GAME_HEIGHT / 2), GAME_SCALE), new Size(34, 28));
+        Enemy pig = new Enemy(new Transform(new Vector2(2000, 500), GAME_SCALE), new Size(34, 28));
         addObject(pig);
     }
 
     @Override
     public void update() {
-        for (int i = 0; i < objects.size(); i++) {
-            objects.get(i).update();
-        }
+        super.update();
     }
 
     @Override
     public void render(Graphics g) {
-        sceneManager.render(g);
-        for (int i = 0; i < objects.size(); i++) {
-            objects.get(i).render(g);
-        }
-        
         super.render(g);
     }
 }

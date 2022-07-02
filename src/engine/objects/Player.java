@@ -8,6 +8,7 @@ import engine.core.Component;
 import engine.core.GameObject;
 import engine.core.Scene;
 import engine.core.SceneManager;
+import engine.utils.Cheats;
 import engine.utils.ObjectType;
 import engine.utils.Size;
 import engine.utils.Transform;
@@ -15,6 +16,7 @@ import engine.utils.Vector2;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.util.List;
 
 import static engine.utils.Constants.Component.SHOW_COLLIDER_TRUE;
 import static engine.utils.Constants.Game.*;
@@ -28,6 +30,8 @@ public class Player extends GameObject {
     private float yDrawOffset = 17 * GAME_SCALE;
     private float airSpeed = 0.0f;
     private float fallSpeedAfterCollision = 0.5f * GAME_SCALE;
+    private int atacatedAnimationCount = 0;
+    private int life = 100;
     
     public GameObject[] AreaDamage = new GameObject[2];
 
@@ -74,6 +78,10 @@ public class Player extends GameObject {
         if (getComponent(CharacterController.class).isAttacking()) {
             currentAnimation = ANIM_ATTACK;
         }
+        
+        if(atacatedAnimationCount>0) {
+        	currentAnimation = ANIM_DAMAGE;
+        }
 
         if (startAnim != currentAnimation)
             resetAnimTick();
@@ -91,7 +99,8 @@ public class Player extends GameObject {
             getComponent(Sprite.class).animIndex++;
             if (getComponent(Sprite.class).animIndex == GetAnimationFrameCount(currentAnimation)) {
                 getComponent(Sprite.class).animIndex = 0;
-//                attacking = false;
+                if(atacatedAnimationCount > 0)
+                	atacatedAnimationCount--;
             }
         }
     }
@@ -99,12 +108,48 @@ public class Player extends GameObject {
     @Override
     public void update() {
     	super.update();
+    	RigidBody rg = getComponent(RigidBody.class);
+    	
         updateAnimation();
         setAnimation();
         CharacterController cc = getComponent(CharacterController.class);
         AreaDamage[1].getTransform().position = new Vector2(transform.position.x + 45, transform.position.y-20);        	
         AreaDamage[0].getTransform().position = new Vector2(transform.position.x - 70, transform.position.y-20); 
-        if(cc.isAttacking()) {
+        
+        List<GameObject> aux = parentScene.getObjects(
+	        new ObjectType[]{
+	        	ObjectType.Damage_Enemy_Left, 
+	        	ObjectType.Damage_Enemy_Right	
+	        }
+        );
+        BoxCollider2D bcp = getComponent(BoxCollider2D.class);
+        boolean hasDamage = false;
+        for(int i = 0; i < aux.size(); i++) {
+        	GameObject go = aux.get(i);
+        	if(go.activated) {
+        		BoxCollider2D bcd = go.getComponent(BoxCollider2D.class);
+        		if(bcd != null && bcp != null) {
+        			if(BoxCollider2D.intersection(bcd, bcp) && !bcp.intersected) {
+        				bcp.intersected = true;
+        				life--;
+//        				movimentCount = 0;
+        				atacatedAnimationCount = 3;
+        				RigidBody rb = getComponent(RigidBody.class);
+        				if(go.getType() == ObjectType.Damage_Enemy_Left) {
+        					rb.addForce(new Vector2(-5,-2));
+        				}
+        				if(go.getType() == ObjectType.Damage_Enemy_Right) {
+        					rb.addForce(new Vector2(5,-2));
+        				}
+        				hasDamage = true;
+        			}
+        		}
+        	} 
+        }
+        bcp.intersected = !(!hasDamage && atacatedAnimationCount == 0);
+        Scene.setInfo("atacatedAnimationCount player", atacatedAnimationCount);
+        
+        if(cc.isAttacking() && atacatedAnimationCount == 0) {
         	if(cc.lookSide == CharacterController.LookSide.Right) {
         		AreaDamage[1].activated = true;
         	} else {
@@ -136,7 +181,9 @@ public class Player extends GameObject {
 			Scene.CameraScene.y = transform.position.y+Scene.CameraScene.y - GAME_HEIGHT/2;
 			transform.position.y = GAME_HEIGHT/2;
 		}
+        
         Scene.setInfo("Camera Position",Scene.CameraScene.toString());
+        Scene.setInfo("Life player",life);
     }
 
     @Override

@@ -14,6 +14,7 @@ public class BoxCollider2D extends Component {
     public int height;
     private Rectangle2D.Float hitBox;
     public boolean intersected = false;
+	public boolean up = false,left = false,down = false,right = false;
 
     public BoxCollider2D(boolean show) {
         this.show = show;
@@ -48,6 +49,15 @@ public class BoxCollider2D extends Component {
             	g2d.setColor(Color.RED);
             }
             g2d.drawRect((int)getHitBox().x, (int)getHitBox().y, (int)getHitBox().width, (int)getHitBox().height);
+            g2d.setColor(Color.BLUE);
+            if(up)
+            	g2d.drawLine((int)getHitBox().x, (int)getHitBox().y, (int)getHitBox().x + (int)getHitBox().width, (int)getHitBox().y);
+            if(down)
+                g2d.drawLine((int)getHitBox().x, (int)getHitBox().y + (int)getHitBox().height, (int)getHitBox().x + (int)getHitBox().width, (int)getHitBox().y + (int)getHitBox().height);
+            if(left)
+                g2d.drawLine((int)getHitBox().x, (int)getHitBox().y, (int)getHitBox().x, (int)getHitBox().y + (int)getHitBox().height);
+            if(right)
+                g2d.drawLine((int)getHitBox().x + (int)getHitBox().width, (int)getHitBox().y, (int)getHitBox().x + (int)getHitBox().width, (int)getHitBox().y + (int)getHitBox().height);
         }
     }
     
